@@ -1,0 +1,24 @@
+{
+
+  "name": "yrizos/table",
+  "homepage": "https://github.com/yrizos/table",
+  "type": "library",
+  "keywords": ["table"],
+  "license": "MIT",
+
+  "authors": [
+    {
+      "name": "Yannis Rizos",
+      "email": "yrizos@gmail.com",
+      "homepage": "https://twitter.com/yrizos"
+    }
+  ],
+
+  "minimum-stability": "dev",
+
+  "autoload": {
+    "psr-4": {
+      "Table\\": "src/"
+    }
+  }
+}
