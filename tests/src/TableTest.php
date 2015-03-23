@@ -82,7 +82,7 @@ class TableTest extends \PHPUnit_Framework_TestCase
     {
         $table1 = new Table();
         $table2 = new Table();
-        $data  = [];
+        $data   = [];
 
         for ($r = 0; $r < 5; $r++) {
             $data[$r] = [];
@@ -92,11 +92,11 @@ class TableTest extends \PHPUnit_Framework_TestCase
             }
         }
 
-        foreach($data as $row) {
+        foreach ($data as $row) {
             $table1->addRow($row);
 
             $r = new Row();
-            foreach($row as $cell) {
+            foreach ($row as $cell) {
                 $r->addCell($cell);
             }
 
@@ -106,5 +106,19 @@ class TableTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(count($data), count($table1));
         $this->assertEquals(count($data), count($table2));
         $this->assertEquals($table1->toArray(), $table2->toArray());
+
+        foreach ($data as $row_positon => $row) {
+            $r = $table1->get($row_positon);
+            $this->assertEquals(count($row), count($r));
+
+            foreach ($row as $cell_position => $cell) {
+                $c1 = $table1->get($row_positon, $cell_position);
+                $c2 = $r->get($cell_position);
+
+                $this->assertEquals($cell, $c1->value);
+                $this->assertEquals($cell_position, $c1->position);
+                $this->assertEquals($c1->toArray(), $c2->toArray());
+            }
+        }
     }
 }

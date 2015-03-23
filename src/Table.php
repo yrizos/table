@@ -36,7 +36,7 @@ class Table extends Object implements \Countable
     {
         $row = isset($this->rows[$row_position]) ? $this->rows[$row_position] : null;
 
-        return $row && $cell_position ? $row->get($cell_position) : $row;
+        return $row && null !== $cell_position ? $row->get($cell_position) : $row;
     }
 
     public function count()
