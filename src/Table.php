@@ -15,6 +15,9 @@ class Table extends Object implements \Countable
     /** @var array */
     private $rows = [];
 
+    /** @var Row */
+    private $header;
+
     /**
      * @param string|null $name
      */
@@ -24,17 +27,48 @@ class Table extends Object implements \Countable
     }
 
     /**
+     * @param Cell|string $cell
+     * @param null|string $name
+     *
+     * @return $this
+     */
+    public function addHeader($cell, $name = null)
+    {
+        $this->getHeader()->addCell(self::buildCell($cell, $name));
+
+        return $this;
+    }
+
+    /**
+     * @return Row
+     */
+    public function getHeader()
+    {
+        if (null == $this->header) $this->header = new Row();
+
+        return $this->header;
+    }
+
+    /**
      * @param Row|array $row
      *
      * @return $this
      */
     public function addRow($row)
     {
-        $row = self::buildRow($row);
+        $row          = self::buildRow($row);
         $row->row     = count($this);
         $this->rows[] = $row;
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRows()
+    {
+        return $this->rows;
     }
 
     /**
@@ -102,13 +136,34 @@ class Table extends Object implements \Countable
      */
     public function toArray()
     {
-        $array         = parent::toArray();
-        $array['rows'] = array_map(function ($row) {
-            return $row->toArray();
-        }, $this->rows);
+        $header   = $this->getHeader();
+        $rows     = $this->getRows();
+        $c_header = count($header);
+        $c_rows   = !empty($rows) ? max(array_map('count', $rows)) : 0;
+        $c_max    = max($c_header, $c_rows);
+
+        $header = self::fillRow($header, $c_max)->toArray();
+        $rows   = array_map(function ($row) use ($c_max) {
+            return self::fillRow($row, $c_max)->toArray();
+        }, $rows);
+
+        $array           = parent::toArray();
+        $array['header'] = $header;
+        $array['rows']   = $rows;
 
         return $array;
     }
+
+    public static function fillRow(Row $row, $length)
+    {
+        $diff = $length - count($row);
+        if ($diff > 0) {
+            for ($i = 0; $i < $diff; $i++) $row->addCell('');
+        }
+
+        return $row;
+    }
+
 
     /**
      * @param Cell|string $cell
@@ -118,7 +173,7 @@ class Table extends Object implements \Countable
      */
     public static function buildCell($cell, $name = null)
     {
-        if (!($cell instanceof $cell)) $cell = new Cell($cell);
+        if (!($cell instanceof Cell)) $cell = new Cell($cell);
         if (null !== $name) $cell->name = $name;
 
         return $cell;
