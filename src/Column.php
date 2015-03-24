@@ -40,8 +40,7 @@ class Column extends Row
      */
     public function addCell($cell, $name = null)
     {
-        if (!($cell instanceof $cell)) $cell = new Cell($cell, $name);
-
+        $cell = Table::buildCell($cell, $name);
         $cell->column  = $this->column;
         $cell->row     = count($this);
         $this->cells[] = $cell;

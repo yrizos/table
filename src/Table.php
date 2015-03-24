@@ -30,18 +30,7 @@ class Table extends Object implements \Countable
      */
     public function addRow($row)
     {
-        if (is_array($row)) {
-            $cells    = $row;
-            $row      = new Row();
-
-            foreach ($cells as $key => $value) {
-                $name = is_int($key) ? null : $key;
-                $row->addCell(new Cell($value, $name));
-            }
-        }
-
-        if (!($row instanceof Row)) throw new \InvalidArgumentException();
-
+        $row = self::buildRow($row);
         $row->row     = count($this);
         $this->rows[] = $row;
 
@@ -119,6 +108,51 @@ class Table extends Object implements \Countable
         }, $this->rows);
 
         return $array;
+    }
+
+    /**
+     * @param Cell|string $cell
+     * @param null|string $name
+     *
+     * @return Cell
+     */
+    public static function buildCell($cell, $name = null)
+    {
+        if (!($cell instanceof $cell)) $cell = new Cell($cell);
+        if (null !== $name) $cell->name = $name;
+
+        return $cell;
+    }
+
+    /**
+     * @param Row|array $row
+     *
+     * @return Row
+     */
+    public static function buildRow($row)
+    {
+        if (is_array($row)) $row = self::populateRow(new Row(), $row);
+        if (!($row instanceof Row)) throw new \InvalidArgumentException();
+
+        return $row;
+    }
+
+    /**
+     * @param Row   $row
+     * @param array $cells
+     *
+     * @return Row
+     */
+    public static function populateRow(Row $row, array $cells)
+    {
+        foreach ($cells as $name => $cell) {
+            $name = is_numeric($name) ? null : $name;
+            $cell = self::buildCell($cell, $name);
+
+            $row->addCell($cell);
+        }
+
+        return $row;
     }
 
 }

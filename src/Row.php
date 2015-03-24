@@ -43,8 +43,7 @@ class Row extends Object implements \Countable
      */
     public function addCell($cell, $name = null)
     {
-        if (!($cell instanceof $cell)) $cell = new Cell($cell, $name);
-
+        $cell = Table::buildCell($cell, $name);
         $cell->column  = count($this);
         $cell->row     = $this->row;
         $this->cells[] = $cell;
