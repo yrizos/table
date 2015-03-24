@@ -154,16 +154,20 @@ class Table extends Object implements \Countable
         return $array;
     }
 
+    /**
+     * @param Row $row
+     * @param int $length
+     *
+     * @return Row
+     */
     public static function fillRow(Row $row, $length)
     {
-        $diff = $length - count($row);
-        if ($diff > 0) {
-            for ($i = 0; $i < $diff; $i++) $row->addCell('');
-        }
+        $length = (int)$length;
+        $diff   = $length - count($row);
+        if ($diff > 0) for ($i = 0; $i < $diff; $i++) $row->addCell('');
 
         return $row;
     }
-
 
     /**
      * @param Cell|string $cell
